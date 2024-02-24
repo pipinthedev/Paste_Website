@@ -5,17 +5,20 @@ require 'includes/functions.php';
 $messageToShow = "";
 $askForPassword = false;
 $expired = false;
+$title = "";
 
 if (isset($_GET['unique_id'])) {
     $uniqueId = $_GET['unique_id'];
+  
 
-    $stmt = $conn->prepare("SELECT message, paste_password, paste_expiry FROM paste WHERE unique_id = ?");
+    $stmt = $conn->prepare("SELECT message, paste_password, paste_expiry, paste_title FROM paste WHERE unique_id = ?");
     $stmt->bind_param("s", $uniqueId);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
+        $title = $row['paste_title'];
 
         if (!is_null($row['paste_expiry']) && new DateTime() > new DateTime($row['paste_expiry'])) {
             $expired = true;
@@ -54,23 +57,39 @@ if (isset($_GET['unique_id'])) {
 </head>
 <body class="bg-black flex justify-center items-center h-screen">
     <div class="flex items-start space-x-4">
-    <?php if (!$askForPassword): ?>
+        <?php if (!$askForPassword): ?>
         <div class="flex flex-col items-center space-y-4 text-white mt-20 mr-10">
-    <div class="text-lg font-bold mb-1">Like</div>
-    <button><i class="fas fa-thumbs-up text-2xl iconss"></i></button>
-    <div class="text-lg font-bold mb-1">Dislike</div>
-    <button><i class="fas fa-thumbs-down text-2xl iconss"></i></button>
-    <div class="text-lg font-bold mb-1">Report</div>
-    <button><i class="fas fa-flag text-2xl iconss"></i></button>
-    <div class="text-lg font-bold mb-1">Download</div>
-    <button><i class="fas fa-download text-2xl iconss"></i></button>
-    <div class="text-lg font-bold mb-1">Raw</div>
-    <button><i class="fas fa-code text-2xl iconss"></i></button>
-</div>
+            <div class="text-lg font-bold mb-1">Like</div>
+            <button><i class="fas fa-thumbs-up text-2xl iconss"></i></button>
+
+            <div class="text-lg font-bold mb-1">Dislike</div>
+            <button><i class="fas fa-thumbs-down text-2xl iconss"></i></button>
+
+            <div class="text-lg font-bold mb-1">Report</div>
+            <button><i class="fas fa-flag text-2xl iconss"></i></button>
 
 
+            <div class="text-lg font-bold mb-1">Download</div>
+            <form action="download.php" method="POST">
+                <input type="hidden" name="title" value="<?php echo htmlspecialchars($title); ?>">
+                <input type="hidden" name="message" value="<?php echo htmlspecialchars($messageToShow); ?>">
+                <button type="submit" style="background:none; border:none; padding:0; margin:0;">
+                    <i class="fas fa-download text-2xl iconss"></i>
+                </button>
+            </form>
+
+            <!-- Raw functionality -->
+            <div class="text-lg font-bold mb-1">Raw</div>
+            <form action="raw.php" method="POST" target="_blank">
+                <input type="hidden" name="message" value="<?php echo htmlspecialchars($messageToShow); ?>">
+                <button type="submit" style="background:none; border:none; padding:0; margin:0;">
+                    <i class="fas fa-code text-2xl iconss"></i>
+                </button>
+            </form>
+        </div>
         <?php endif; ?>
-        
+    </div>
+      
         <div class="flex-1 max-w-4xl" style="width: calc(100% + 300px); margin-top: 80px !important;">
             <?php if ($askForPassword): ?>
                 <form action="" method="post" class="text-center">
