@@ -19,72 +19,85 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $stmt->execute();
 
     $stmt->close();
-    
-    header('Location: ' . $_SERVER['PHP_SELF'] . '?success=1&unique_id=' . $uniqueId);
+
+    header('Location: ' . 'view.php?unique_id=' . $uniqueId);
     exit;
 }
 
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Encrypted Message Form with Unique ID</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Paste</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .dark-bg {
+            background-color: #121212; /* Dark background */
+        }
+
+        .text-area-bg {
+            background-color: #333333; /* Darker textarea background */
+            color: #ffffff; /* White text for better contrast */
+        }
+
+        .full-width {
+            width: 100%; /* Ensure button is full-width */
+        }
+
+        @media (max-width: 768px) {
+            .responsive-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr)); /* Stack elements in a single column on smaller screens */
+            }
+        }
+    </style>
 </head>
-<body class="flex justify-center items-center h-screen bg-gray-100">
-<?php require_once('./includes/navbar.php'); ?>
-    <div class="w-full max-w-md">
-        <?php if(isset($_GET['success'])): ?>
-            <p class="text-green-500">Message saved successfully with Unique ID: <?php echo htmlspecialchars($_GET['unique_id']); ?></p>
-        <?php endif; ?>
-        <form method="post" action="" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
-                    Title
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" name="title" placeholder="Paste Title">
+
+<body class="dark-bg text-white flex justify-center items-center min-h-screen px-4">
+    <div class="w-full max-w-4xl">
+        <h2 class="text-center text-xl font-bold mb-6">Create New Paste</h2>
+        <form method="post" action="" class="space-y-6">
+            <div>
+                <label for="title" class="block text-sm font-bold mb-2">Title</label>
+                <input type="text" name="title" id="title" placeholder="Paste Title"
+                    class="text-area-bg shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="message">
-                    Message
-                </label>
-                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" name="message" rows="4" placeholder="Enter your message here"></textarea>
+            <div class="grid md:grid-cols-3 gap-4 responsive-grid">
+                <div>
+                    <label for="visibility" class="block text-sm font-bold mb-2">Visibility</label>
+                    <select name="visibility" id="visibility"
+                        class="text-area-bg shadow border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-bold mb-2">Password (Optional)</label>
+                    <input type="password" name="password" id="password" placeholder="Password"
+                        class="text-area-bg shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="expiry" class="block text-sm font-bold mb-2">Expiry Time</label>
+                    <select name="expiry" id="expiry"
+                        class="text-area-bg shadow border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">No Expiry</option>
+                        <option value="1_hour">1 Hour</option>
+                        <option value="1_day">1 Day</option>
+                        <option value="1_week">1 Week</option>
+                        <option value="1_month">1 Month</option>
+                        <option value="1_year">1 Year</option>
+                        <option value="10_years">10 Years</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="visibility">
-                    Visibility
-                </label>
-                <select class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="visibility" name="visibility">
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
+            <div>
+                <label for="message" class="block text-sm font-bold mb-2">Message</label>
+                <textarea name="message" id="message" rows="10" placeholder="Enter your message here"
+                    class="text-area-bg shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"></textarea>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    Password (Optional)
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" name="password" placeholder="Password">
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="expiry">
-                    Expiry Time
-                </label>
-                <select class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="expiry" name="expiry">
-                    <option value="">No Expiry</option>
-                    <option value="1_hour">1 Hour</option>
-                    <option value="1_day">1 Day</option>
-                    <option value="1_week">1 Week</option>
-                    <option value="1_month">1 Month</option>
-                    <option value="1_year">1 Year</option>
-                    <option value="10_years">10 Years</option>
-                </select>
-            </div>
-            <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                    Submit
-                </button>
-            </div>
+            <button type="submit"
+                class="full-width bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">Paste</button>
         </form>
     </div>
 </body>
