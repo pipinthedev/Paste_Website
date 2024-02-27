@@ -1,15 +1,40 @@
 <?php
 require 'server/connect.php';
 require 'includes/functions.php';
+session_start();
 
 $messageToShow = "";
 $askForPassword = false;
 $expired = false;
 $title = "";
+$viewUpdated = false;
+
+
+if (isset($_POST['action']) && isset($_POST['unique_id']) && ($_POST['action'] == 'like' || $_POST['action'] == 'dislike')) {
+    $uniqueId = $_POST['unique_id'];
+    if ($_POST['action'] == 'like') {
+        $stmt = $conn->prepare("UPDATE paste SET likes = likes + 1 WHERE unique_id = ?");
+    } else {
+        $stmt = $conn->prepare("UPDATE paste SET dislikes = dislikes + 1 WHERE unique_id = ?");
+    }
+    $stmt->bind_param("s", $uniqueId);
+    $stmt->execute();
+    $stmt->close();
+    header("Location: view.php?unique_id=" . $uniqueId);
+    exit;
+}
 
 if (isset($_GET['unique_id'])) {
     $uniqueId = $_GET['unique_id'];
-  
+
+    // Increase views count
+    if (!$viewUpdated) {
+        $updateViewsStmt = $conn->prepare("UPDATE paste SET views = views + 1 WHERE unique_id = ?");
+        $updateViewsStmt->bind_param("s", $uniqueId);
+        $updateViewsStmt->execute();
+        $updateViewsStmt->close();
+        $viewUpdated = true;
+    }
 
     $stmt = $conn->prepare("SELECT message, paste_password, paste_expiry, paste_title FROM paste WHERE unique_id = ?");
     $stmt->bind_param("s", $uniqueId);
@@ -55,16 +80,27 @@ if (isset($_GET['unique_id'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link href="assets/css/dash.css" rel="stylesheet">
 </head>
-<body class="bg-black flex justify-center items-center h-screen">
+<?php require('includes/navbar.php') ?>
+
+<body class="bg-black" style="background-color: #121213 !important;">
+
+    <div class="flex justify-center items-center h-screen">
     <div class="flex items-start space-x-4">
         <?php if (!$askForPassword): ?>
         <div class="flex flex-col items-center space-y-4 text-white mt-20 mr-10">
             <div class="text-lg font-bold mb-1">Like</div>
-            <button><i class="fas fa-thumbs-up text-2xl iconss"></i></button>
+            <form action="" method="post">
+    <input type="hidden" name="action" value="like">
+    <input type="hidden" name="unique_id" value="<?php echo $uniqueId; ?>">
+    <button type="submit"><i class="fas fa-thumbs-up text-2xl iconss"></i></button>
+</form>
 
             <div class="text-lg font-bold mb-1">Dislike</div>
-            <button><i class="fas fa-thumbs-down text-2xl iconss"></i></button>
-
+            <form action="" method="post">
+    <input type="hidden" name="action" value="dislike">
+    <input type="hidden" name="unique_id" value="<?php echo $uniqueId; ?>">
+    <button type="submit"><i class="fas fa-thumbs-down text-2xl iconss"></i></button>
+</form>
             <div class="text-lg font-bold mb-1">Report</div>
             <button><i class="fas fa-flag text-2xl iconss"></i></button>
 
@@ -78,7 +114,6 @@ if (isset($_GET['unique_id'])) {
                 </button>
             </form>
 
-            <!-- Raw functionality -->
             <div class="text-lg font-bold mb-1">Raw</div>
             <form action="raw.php" method="POST" target="_blank">
                 <input type="hidden" name="message" value="<?php echo htmlspecialchars($messageToShow); ?>">
@@ -100,7 +135,6 @@ if (isset($_GET['unique_id'])) {
                     <button type="submit" class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
                 </form>
             <?php elseif (!$expired): ?>
-                <!-- Adjusted textarea size with inline style for precise control -->
                 <textarea readonly class="glow_border p-4 bg-gray-800 text-white rounded-lg border-2 overflow-auto" style="height: 500px; width: 800px;"><?php echo htmlspecialchars($messageToShow); ?></textarea>
             <?php else: ?>
                 <p class="text-center text-red-500"><?php echo $messageToShow; ?></p>
@@ -108,7 +142,11 @@ if (isset($_GET['unique_id'])) {
         </div>
        
     </div>
-    <?php require('includes/footer.php'); ?>
+    </div>
     
 </body>
+<div style="color: #FFF !important">
+<?php require('includes/footer.php') ?>
+
+</div>
 </html>

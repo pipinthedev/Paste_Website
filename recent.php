@@ -21,9 +21,10 @@ $stmt->close();
     <title>Recent Pastes</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-black text-white">
+<?php require('./includes/navbar.php') ?>
+<body class="bg-black text-white"  style="background-color: #121213 !important;">
     <div class="flex flex-col items-center justify-center min-h-screen">
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-300"> <!-- Adjusted width here -->
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg" style="width: 90%; max-width: 1200px; margin: auto; background-color: #212123  !important;"> <!-- Custom width -->
             <h2 class="text-2xl font-bold mb-6 text-center">Recent Pastes</h2>
             <div class="overflow-auto">
                 <table class="w-full">
@@ -70,6 +71,7 @@ $stmt->close();
         </div>
     </div>
 </body>
+<?php require('includes/footer.php') ?>
 </html>
 
 

@@ -1,80 +1,67 @@
-<?php
-
-
-
-
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>Responsive Navbar with Authentication</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
-  <div class="-m-6 max-h-[768px] w-[calc(100%+48px)] overflow-scroll">
-    <nav
-      class="sticky top-0 z-10 block w-full max-w-full px-4 py-2 text-white bg-white border rounded-none shadow-md h-max border-white/80 bg-opacity-80 backdrop-blur-2xl backdrop-saturate-200 lg:px-8 lg:py-4">
-      <div class="flex items-center justify-between text-blue-gray-900">
-        <a href="#"
-          class="mr-4 block cursor-pointer py-1.5 font-sans text-base font-medium leading-relaxed text-inherit antialiased">
-          Material Tailwind
-        </a>
-        <div class="flex items-center gap-4">
-          <div class="hidden mr-4 lg:block">
-            <ul class="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-              <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                <a href="#" class="flex items-center">
-                  Pages
-                </a>
-              </li>
-              <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                <a href="#" class="flex items-center">
-                  Account
-                </a>
-              </li>
-              <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                <a href="#" class="flex items-center">
-                  Blocks
-                </a>
-              </li>
-              <li class="block p-1 font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                <a href="#" class="flex items-center">
-                  Docs
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div class="flex items-center gap-x-1">
-            <button
-              class="hidden px-4 py-2 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none lg:inline-block"
-              type="button">
-              <span>Log In</span>
-            </button>
-            <button
-              class="hidden select-none rounded-lg bg-gradient-to-tr from-gray-900 to-gray-800 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none lg:inline-block"
-              type="button">
-              <span>Sign in</span>
-            </button>
-          </div>
-          <button
-            class="relative ml-auto h-6 max-h-[40px] w-6 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-inherit transition-all hover:bg-transparent focus:bg-transparent active:bg-transparent disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none lg:hidden"
-            type="button">
-            <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-            </span>
-          </button>
+
+<nav class="bg-gray-800 text-white p-4" style="background-color: #1e1e1f !important; ">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <a href="/" class="flex items-center">
+                <img src="./images/paste_logo.png" alt="Logo" class="mr-2" style="width: 50px !important; height: auto;"> 
+            </a>
         </div>
-      </div>
-    </nav>
-  </div>
+
+        <div class="hidden md:flex grow justify-center" style="gap: 40px;">
+    <b>
+        <a href="index.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Create Paste</a>
+        <a href="recent.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Recent Page</a>
+        <a href="top.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Top Paste</a>
+        <a href="top.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Paste Events</a>
+    </b>
 </div>
-<script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
+
+
+        <div class="flex items-center">
+            <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+                <a href="../user/dashboard" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Dashboard</a>
+            <?php else: ?>
+                <a href="../user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Login</a>
+                <span class="mx-2 hidden md:block">or</span>
+                <a href="../user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Register</a>
+                <button class="mobile-menu-button md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="mobile-menu hidden md:hidden p-4 text-center">
+    <a href="../create.php" class="block hover:text-gray-300 mb-2">Create Paste</a>
+    <a href="../recent.php" class="block hover:text-gray-300 mb-2">Recent Page</a>
+    <a href="../top.php" class="block hover:text-gray-300 mb-4">Top Paste</a>
+    <a href="../top.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Paste Events</a>
+    <?php if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
+        <div class="flex justify-center space-x-2">
+            <a href="../user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</a>
+            <span class="text-white">or</span>
+            <a href="../user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</a>
+        </div>
+    <?php endif; ?>
+</div>
+
+</nav>
+
+<script>
+    document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+        document.querySelector('.mobile-menu').classList.toggle('hidden');
+    });
+</script>
+<script src="https://unpkg.com/@tailwindcss"></script>
+
 </body>
 </html>

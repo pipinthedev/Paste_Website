@@ -53,8 +53,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
         }
     </style>
 </head>
+<?php require('includes/navbar.php') ?>
 
-<body class="dark-bg text-white flex justify-center items-center min-h-screen px-4">
+<body class="dark-bg text-white">
+    <div class="flex justify-center items-center min-h-screen px-4">
     <div class="w-full max-w-4xl">
         <h2 class="text-center text-xl font-bold mb-6">Create New Paste</h2>
         <form method="post" action="" class="space-y-6">
@@ -100,5 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
                 class="full-width bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">Paste</button>
         </form>
     </div>
+    </div>
 </body>
+<?php require('includes/footer.php') ?>
+
 </html>
