@@ -72,6 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
 <?php require('includes/navbar.php') ?>
 
 <body class="dark-bg text-white">
+<?php require('includes/ads.php') ?>
     <div class="flex justify-center items-center min-h-screen px-4">
     <div class="w-full max-w-4xl">
         <h2 class="text-center text-xl font-bold mb-6">Create New Paste</h2>

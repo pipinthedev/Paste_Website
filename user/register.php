@@ -130,6 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <?php require('../includes/navbar.php') ?>
 <body class="bg-black text-white"  style="background-color: #121213 !important;">
+<?php require('../includes/ads.php') ?>
     <div class="flex flex-col items-center justify-center min-h-screen px-4">
     <div class="w-full max-w-md p-6 rounded-lg shadow-lg bg-gray-800 bg-opacity-0">
                     <h2 class="text-3xl font-bold mb-6 text-center">Register</h2>

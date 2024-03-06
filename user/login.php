@@ -97,7 +97,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
 </head>
 <?php require('../includes/navbar.php') ?>
+<?php require('../includes/ads.php') ?>
 <body class="text-white" style="background-color: #121213 !important;">
+
     <div class="flex flex-col items-center justify-center min-h-screen px-4">
         <div class="w-full max-w-md p-6 rounded-lg shadow-lg bg-gray-800 bg-opacity-0">
             <h2 class="text-3xl font-bold mb-6 text-center">Login</h2>
@@ -134,4 +136,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
+<?php require('../includes/footer.php') ?>
+
 </html>

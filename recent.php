@@ -33,6 +33,7 @@ $stmt->close();
 <?php require('includes/navbar.php') ?>
 
 <body class="bg-black text-white" style="background-color: #121213 !important;">
+<?php require('includes/ads.php') ?>
     <div class="flex flex-col items-center justify-center min-h-screen">
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg" style="width: 90%; max-width: 1200px; margin: auto; background-color: #212123 !important;">
             <h2 class="text-2xl font-bold mb-6 text-center">Recent Pastes</h2>

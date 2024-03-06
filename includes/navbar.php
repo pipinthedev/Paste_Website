@@ -167,8 +167,6 @@ if ($result && $result->num_rows > 0) {
 }
 
 
-
-
 if ($theme == 1)
 {
     echo '<div class="stars-background-def small-def"></div>
