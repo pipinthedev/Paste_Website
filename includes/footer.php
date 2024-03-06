@@ -1,7 +1,7 @@
 <?php
 
 
-require('./server/connect.php');
+require('../server/connect.php');
 
 
 $sql = "SELECT * FROM site_settings WHERE id = 1";
@@ -21,9 +21,10 @@ mysqli_close($conn);
 $currentYear = date('Y');
 ?>
 
-<footer style="text-align: center; padding: 20px; position: relative; width: 100%; background-color: transparent;">
-    <?php echo htmlspecialchars($shopName); ?> @
-    <?php echo $currentYear; ?>
+<footer style="text-align: center; padding: 20px; position: relative; width: 100%; background-color: transparent; color: #FFF !important; font-weight: 900 !important;">
+@ <?php echo $currentYear; ?> 
+<?php echo htmlspecialchars($shopName); ?>
+   
 </footer>
 
 <style>
