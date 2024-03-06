@@ -1,8 +1,13 @@
 <?php
 require 'server/connect.php';
 require 'includes/functions.php';
+session_start();
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
+$userLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === 1;
+$pasteBy = !$userLoggedIn ? $_SESSION['id'] : $_SESSION['id'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $original_message = trim($_POST['message']);
@@ -14,17 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $encrypted_message = encryptMessage($original_message, $secret_key, $secret_iv, $encrypt_method);
     $uniqueId = generateUniqueId(5);
 
-    $stmt = $conn->prepare("INSERT INTO paste (unique_id, message, visibility, paste_password, paste_expiry, paste_title) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssisss", $uniqueId, $encrypted_message, $visibility, $password, $expiry, $title);
-    $stmt->execute();
+    $stmt = $conn->prepare("INSERT INTO paste (unique_id, message, visibility, paste_password, paste_expiry, paste_title, paste_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-    $stmt->close();
+    if (!$stmt) {
+        echo "Prepare failed: (" . $conn->errno . ") " . $conn->error;
+    } else {
+        $stmt->bind_param("ssisssi", $uniqueId, $encrypted_message, $visibility, $password, $expiry, $title, $pasteBy);
 
-    header('Location: ' . 'view.php?unique_id=' . $uniqueId);
-    exit;
+        if (!$stmt->execute()) {
+            echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+        } else {
+            header('Location: ' . 'view.php?unique_id=' . $uniqueId);
+            exit;
+        }
+        $stmt->close();
+    }
 }
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

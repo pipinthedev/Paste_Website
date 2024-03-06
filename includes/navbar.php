@@ -156,17 +156,16 @@
 <?php
 
 $stmt = $conn->prepare("SELECT * FROM site_settings WHERE id = ?");
-
+$id = 1;
 $stmt->bind_param("i", $id);
-
-
 $stmt->execute();
-
 $result = $stmt->get_result();
 
-$row = $result->fetch_assoc();
-
-$theme = $row['theme'];
+if ($row = $result->fetch_assoc()) {
+    $theme = $row['theme'];
+} else {
+    $theme = null;
+}
 
 $stmt->close();
 
