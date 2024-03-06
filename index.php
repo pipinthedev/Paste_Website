@@ -6,8 +6,11 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$userLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === 1;
-$pasteBy = !$userLoggedIn ? $_SESSION['id'] : $_SESSION['id'];
+if (isset($_SESSION['loggedin']))
+{
+    $userLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === 1;
+    $pasteBy = !$userLoggedIn ? $_SESSION['id'] : $_SESSION['id'];
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $original_message = trim($_POST['message']);

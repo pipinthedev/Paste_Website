@@ -51,6 +51,22 @@ $stmt->close();
 <body class="dark-bg">
     <div class="container mx-auto mt-8">
         <div class="mb-4 text-right">
+            <?php
+
+$userId = $_SESSION['id'];
+$stmt = $conn->prepare("SELECT is_admin FROM users WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result()->fetch_assoc();
+
+if ($result['is_admin'] == 1) {
+ echo'   <a style="margin-right: 10px !important;" href="../admin/manage_ads.php"
+    class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    Admin settings
+</a>';
+}
+
+?>
         <a style="margin-right: 10px !important;" href="settings.php"
                 class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Settings

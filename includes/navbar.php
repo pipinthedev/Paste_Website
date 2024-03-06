@@ -124,11 +124,12 @@
 
         <div class="flex items-center">
             <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-                <a href="../user/dashboard" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Dashboard</a>
+                <a href="/pastyy_site/user/dashboard" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Dashboard</a>
+                <a href="../user/logout" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block ml-2">Log out</a>
             <?php else: ?>
                 <a href="../user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Login</a>
                 <span class="mx-2 hidden md:block">or</span>
-                <a href="../user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Register</a>
+                <a href="./user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden md:block">Register</a>
                 <button class="mobile-menu-button md:hidden">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
@@ -143,9 +144,9 @@
     <a href="../top.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Paste Events</a>
     <?php if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
         <div class="flex justify-center space-x-2">
-            <a href="../user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</a>
+            <a href="./user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</a>
             <span class="text-white">or</span>
-            <a href="../user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</a>
+            <a href="/../user/register.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</a>
         </div>
     <?php endif; ?>
 </div>
@@ -155,19 +156,16 @@
 
 <?php
 
-$stmt = $conn->prepare("SELECT * FROM site_settings WHERE id = ?");
-$id = 1;
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
+$sql = "SELECT * FROM site_settings WHERE id = 1";
+$result = $conn->query($sql);
 
-if ($row = $result->fetch_assoc()) {
+if ($result && $result->num_rows > 0) {
+    $row = $result->fetch_assoc();
     $theme = $row['theme'];
 } else {
     $theme = null;
 }
 
-$stmt->close();
 
 
 
