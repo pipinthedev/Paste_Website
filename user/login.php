@@ -95,14 +95,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    <style> 
+    
+    .top-reduced {
+            margin-top: -350px !important;
+        }
+        </style>
 </head>
 <?php require('../includes/navbar.php') ?>
 <?php require('../includes/ads.php') ?>
 <body class="text-white" style="background-color: #121213 !important;">
 
-    <div class="flex flex-col items-center justify-center min-h-screen px-4">
-        <div class="w-full max-w-md p-6 rounded-lg shadow-lg bg-gray-800 bg-opacity-0">
-            <h2 class="text-3xl font-bold mb-6 text-center">Login</h2>
+    <div class="flex flex-col items-center justify-center min-h-screen">
+        <div class="w-full max-w-md mt-4 px-6 py-4 shadow-md overflow-hidden sm:rounded-lg top-reduced">
+            <h2 class="text-2xl font-bold mb-2 text-center">Login</h2>
             <?php 
             if(!empty($login_err)){
                 echo '<div class="alert alert-danger">' . $login_err . '</div>';
@@ -134,8 +140,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </p>
             </form>
         </div>
+        <?php require('../includes/footer.php') ?>
+
     </div>
 </body>
-<?php require('../includes/footer.php') ?>
+
 
 </html>

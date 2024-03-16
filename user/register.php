@@ -127,13 +127,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Register</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    <style> 
+    
+    .top-reduced {
+            margin-top: -350px !important;
+        }
+        </style>
 </head>
 <?php require('../includes/navbar.php') ?>
 <body class="bg-black text-white"  style="background-color: #121213 !important;">
 <?php require('../includes/ads.php') ?>
-    <div class="flex flex-col items-center justify-center min-h-screen px-4">
-    <div class="w-full max-w-md p-6 rounded-lg shadow-lg bg-gray-800 bg-opacity-0">
-                    <h2 class="text-3xl font-bold mb-6 text-center">Register</h2>
+<div class="flex flex-col items-center justify-center min-h-screen">
+        <div class="w-full max-w-md mt-4 px-6 py-4 shadow-md overflow-hidden sm:rounded-lg top-reduced">
+            <h2 class="text-2xl font-bold mb-2 text-center">Register</h2>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                 <div class="mb-4">
@@ -165,6 +171,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </p>
             </form>
         </div>
+        <?php require('../includes/footer.php') ?>
     </div>
+ 
 </body>
+
 </html>

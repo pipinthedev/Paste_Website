@@ -12,6 +12,11 @@ if (isset($_SESSION['loggedin']))
     $pasteBy = !$userLoggedIn ? $_SESSION['id'] : $_SESSION['id'];
 }
 
+    $userLoggedIn = isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true;
+    $pasteBy = $userLoggedIn ? $_SESSION['username'] : 'Anonymous';
+    $pasteUserId = $userLoggedIn ? $_SESSION['id'] : 0;
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $original_message = trim($_POST['message']);
     $visibility = ($_POST['visibility'] == 'public') ? 1 : 0;
@@ -22,12 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     $encrypted_message = encryptMessage($original_message, $secret_key, $secret_iv, $encrypt_method);
     $uniqueId = generateUniqueId(5);
 
-    $stmt = $conn->prepare("INSERT INTO paste (unique_id, message, visibility, paste_password, paste_expiry, paste_title, paste_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    
+
+
+
+    $stmt = $conn->prepare("INSERT INTO paste (unique_id, message, visibility, paste_password, paste_expiry, paste_title, paste_by, paste_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     if (!$stmt) {
         echo "Prepare failed: (" . $conn->errno . ") " . $conn->error;
     } else {
-        $stmt->bind_param("ssisssi", $uniqueId, $encrypted_message, $visibility, $password, $expiry, $title, $pasteBy);
+        $stmt->bind_param("ssissssi", $uniqueId, $encrypted_message, $visibility, $password, $expiry, $title, $pasteBy, $pasteUserId);
 
         if (!$stmt->execute()) {
             echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;

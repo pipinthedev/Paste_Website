@@ -2,18 +2,15 @@
 require '../server/connect.php';
 session_start();
 
-// Check if the user is logged in, otherwise redirect to the login page
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: ../index.php');
     exit;
 }
 
-$userId = $_SESSION['id']; // Adjust 'id' based on your session variable name
+$userId = $_SESSION['id']; 
 
-// Initialize variables to store user settings
 $cracked = $patched = $nulled = $telegram = $discord = $website = '';
 
-// Fetch current user settings
 if ($stmt = $conn->prepare("SELECT cracked, patched, nulled, telegram, discord, website FROM users WHERE id = ?")) {
     $stmt->bind_param("i", $userId);
     $stmt->execute();
@@ -29,7 +26,6 @@ if ($stmt = $conn->prepare("SELECT cracked, patched, nulled, telegram, discord, 
     $stmt->close();
 }
 
-// Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cracked = htmlspecialchars($_POST['cracked']);
     $patched = htmlspecialchars($_POST['patched']);
@@ -38,13 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $discord = htmlspecialchars($_POST['discord']);
     $website = htmlspecialchars($_POST['website']);
 
-    // Update user settings
     if ($stmt = $conn->prepare("UPDATE users SET cracked=?, patched=?, nulled=?, telegram=?, discord=?, website=? WHERE id=?")) {
         $stmt->bind_param("ssssssi", $cracked, $patched, $nulled, $telegram, $discord, $website, $userId);
         if ($stmt->execute()) {
-            echo "<p>Settings updated successfully.</p>";
+            $_SESSION['message'] = "Settings updated successfully.";
         } else {
-            echo "<p>Error updating settings.</p>";
+            $_SESSION['message'] = "Error updating settings.";
         }
         $stmt->close();
     }
@@ -63,16 +58,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-gray-800 text-white" style=" background-color: #121212;">
     <div class="container mx-auto p-4 mt-12">
     <div class="mb-4 text-right">
-        <a style="margin-right: 10px !important;" href="settings.php"
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Settings
-            </a>
             <a href="dashboard.php"
                 class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Go Back
             </a>
             
         </div>
+        <?php if(isset($_SESSION['message'])): ?>
+    <div id="message-alert" class="bg-green-500 text-white px-4 py-3 rounded relative mt-2 mb-3 custom-width" role="alert">
+        <span class="block sm:inline"><?= $_SESSION['message']; ?></span>
+    </div>
+    <script>
+        setTimeout(function() {
+            var messageAlert = document.getElementById('message-alert');
+            if (messageAlert) {
+                messageAlert.style.display = 'none';
+            }
+        }, 5000);
+    </script>
+    <?php unset($_SESSION['message']); endif; ?>
+
         <div class="max-w-2xl mx-auto bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 mb-4" style="background-color: #1e1e1f;">
             <h1 class="text-xl font-bold mb-4 text-center">User Settings</h1>
             <form action="" method="post" class="space-y-6">

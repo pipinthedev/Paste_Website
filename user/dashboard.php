@@ -2,7 +2,6 @@
 require '../server/connect.php';
 session_start();
 
-// Redirect to login page if user is not logged in
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
@@ -35,7 +34,6 @@ $stmt->close();
     <style>
         .dark-bg {
             background-color: #121212;
-            /* Dark background */
         }
 
         @media (max-width: 640px) {
@@ -49,7 +47,7 @@ $stmt->close();
 <?php require('../includes/navbar.php') ?>
 
 <body class="dark-bg">
-    <div class="container mx-auto mt-8">
+<div class="container mx-auto mt-8 px-4">
         <div class="mb-4 text-right">
             <?php
 
@@ -59,31 +57,33 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result()->fetch_assoc();
 
-if ($result['is_admin'] == 1) {
- echo'   <a style="margin-right: 10px !important;" href="../admin/manage_ads.php"
-    class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    Admin settings
-</a>';
-}
+
 
 ?>
-        <a style="margin-right: 10px !important;" href="settings.php"
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Settings
-            </a>
-            <a style="margin-right: 10px !important;" href="settings.php"
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Manage Account
-            </a>
-            <a href="dashboard.php"
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Go Back
-            </a>
+<div class="text-center sm:text-right mt-4 sm:mt-0">
+       <a href="settings.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Settings
+    </a>
+
+    <?php
+if ($result['is_admin'] == 1) {
+    echo'    <a href="../admin/manage_ads.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+    Admin Settings
+</a>';
+   }
+    ?>
+    
+    <a href="manage_account.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Manage Account
+    </a>
+    <a href="dashboard.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Go Back
+    </a>
             
             
         </div>
         
-        <div class="text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 overflow-hidden"
+        <div class="text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 overflow-hidden mt-2"
             style="background-color: #1e1e1f !important; color: #FFF !important;">
             <center>
                 <h2 class="block text-gray-700 text-lg font-bold mb-2" style="color: #FFF !important;">My Pastes</h2>

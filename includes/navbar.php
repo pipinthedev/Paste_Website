@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,6 @@
   width: 10px;
   height: 10px;
   background: linear-gradient(white, white);
-  /* Workaround for Chromium's selective color inversion */
   border-radius: 50%;
   filter: drop-shadow(0 0 10px white);
 }
@@ -141,7 +141,6 @@
     <a href="../create.php" class="block hover:text-gray-300 mb-2">Create Paste</a>
     <a href="../recent.php" class="block hover:text-gray-300 mb-2">Recent Page</a>
     <a href="../top.php" class="block hover:text-gray-300 mb-4">Top Paste</a>
-    <a href="../top.php" class="hover:text-gray-300" style="margin-right: 20px !important;">Paste Events</a>
     <?php if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
         <div class="flex justify-center space-x-2">
             <a href="./user/login.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</a>
@@ -155,6 +154,9 @@
 
 
 <?php
+
+require '../server/connect.php';
+
 
 $sql = "SELECT * FROM site_settings WHERE id = 1";
 $result = $conn->query($sql);
