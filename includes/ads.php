@@ -36,7 +36,7 @@ echo '<style>
         }
       </style>';
 
-echo '<div class="ads-container">'; // Use a class for the flex container
+echo '<div class="ads-container">'; 
 
 if ($result === false) {
     error_log("Error: " . $conn->error);
@@ -44,7 +44,6 @@ if ($result === false) {
 } else {
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-            // Each ad is wrapped in a div with class "ad" for better control
             echo '<div class="ad"><a href="' . htmlspecialchars($row['url']) . '" target="_blank"><img src="' . htmlspecialchars($row['img']) . '" alt="Ad Image"></a></div>';
         }
     } else {
@@ -52,7 +51,7 @@ if ($result === false) {
     }
 }
 
-echo '</div>'; // Close the flex container
+echo '</div>';
 
 $conn->close();
 ?>

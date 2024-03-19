@@ -18,51 +18,47 @@ if ($result['is_admin'] != 1) {
     exit;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $img = $_POST['image'];
-    $url = $_POST['url'];
-    $owner = $_POST['owner'];
-    $expiry_at = $_POST['expiry_at'];
+$message = $_SESSION['message'] ?? null;
+unset($_SESSION['message']);
 
-    $query = "INSERT INTO images (img, url, owner, expiry_at) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssss", $img, $url, $owner, $expiry_at);
-    
-    if ($stmt->execute()) {
-        $_SESSION['message'] = "Image information saved successfully.";
-        $_SESSION['message_type'] = "success";
-    } else {
-        $_SESSION['message'] = "Error: Could not save the data.";
-        $_SESSION['message_type'] = "error";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = $_POST['action'] ?? '';
+    $id = $_POST['id'] ?? '';
+    $img = $_POST['img'] ?? '';
+    $url = $_POST['url'] ?? '';
+    $owner = $_POST['owner'] ?? '';
+    $expiry_at = $_POST['expiry_at'] ?? '';
+
+    if ($action == 'add') {
+        $stmt = $conn->prepare("INSERT INTO ads (img, url, owner, expiry_at) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $img, $url, $owner, $expiry_at);
+        if ($stmt->execute()) {
+            $message = "Ad added successfully.";
+        } else {
+            $message = "Error adding ad.";
+        }
+    } elseif ($action == 'update') {
+        $stmt = $conn->prepare("UPDATE ads SET img = ?, url = ?, owner = ?, expiry_at = ? WHERE id = ?");
+        $stmt->bind_param("ssssi", $img, $url, $owner, $expiry_at, $id);
+        if ($stmt->execute()) {
+            $message = "Ad updated successfully.";
+        } else {
+            $message = "Error updating ad.";
+        }
+    } elseif ($action == 'delete') {
+        $stmt = $conn->prepare("DELETE FROM ads WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            $message = "Ad deleted successfully.";
+        } else {
+            $message = "Error deleting ad.";
+        }
     }
     $stmt->close();
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'updateAd') {
-    $id = $_POST['id'];
-    $img = $_POST['image'];
-    $url = $_POST['url'];
-    $owner = $_POST['owner'];
-    $expiry_at = $_POST['expiry_at'];
-
-    $stmt = $conn->prepare("UPDATE images SET img = ?, url = ?, owner = ?, expiry_at = ? WHERE id = ?");
-    $stmt->bind_param("ssssi", $img, $url, $owner, $expiry_at, $id);
-    
-    if ($stmt->execute()) {
-        $_SESSION['message'] = "Image information saved successfully.";
-        $_SESSION['message_type'] = "success";
-    } else {
-        $_SESSION['message'] = "Error: Could not save the data.";
-        $_SESSION['message_type'] = "error";
-    }
-    $stmt->close();
-    $conn->close();
-    exit;
 }
 
 $ads = [];
-$query = "SELECT * FROM ads ORDER BY expiry_at DESC";
-$result = $conn->query($query);
+$result = $conn->query("SELECT * FROM ads ORDER BY expiry_at DESC");
 while ($row = $result->fetch_assoc()) {
     $ads[] = $row;
 }
@@ -75,6 +71,16 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Image Submission</title>
+    <style>
+     .input-field {
+            background-color: #2D2D2D;
+            color: white;
+        }
+        .table-bg {
+            background-color: #3D3D3D;
+            color: white;
+        }
+    </style>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
@@ -87,140 +93,113 @@ $conn->close();
         });
     </script>
 </head>
-<?php require('../includes/navbar.php') ?>
+<?php require('navbar.php') ?>
 <body class="bg-gray-100" style="background-color: #121212;">
-    <div class="container mx-auto px-4 py-8">
-        <?php if (isset($_SESSION['message'])): ?>
-            <div id="alert" class="bg-<?php echo $_SESSION['message_type'] == 'success' ? 'green' : 'red'; ?>-500 text-white px-6 py-4 border-0 rounded relative mb-4">
-                <?php echo $_SESSION['message']; ?>
-            </div>
-            <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
+<div class="container mx-auto p-4">
+<div class="text-center sm:text-right mt-4 sm:mt-0">
+       <a href="manage_reports.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Manage Reports
+    </a>
+    <a href="manage_users.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Manage users
+    </a>
+    <a href="manage_settings.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Manage settings
+    </a>
+    <a href="manage_paste.php" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Manage Paste
+    </a>
+
+    <a href="settings.php" class="mt-2 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2 mb-2 sm:mb-0 sm:mx-0">
+        Back
+    </a>
+
+
+</div>
+<?php if ($message): ?>
+        <div id="message-alert" class="bg-green-500 text-center p-2 rounded mb-4 text-white">
+            <?= htmlspecialchars($message); ?>
+        </div>
+        <script>
+            setTimeout(() => {
+                const alertBox = document.getElementById('message-alert');
+                if (alertBox) {
+                    alertBox.style.display = 'none';
+                }
+            }, 3000);
+        </script>
         <?php endif; ?>
-        <div class="flex justify-center">
-            <div class="w-full max-w-lg">
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style="background-color: #1e1e1f;">
-                <h1 class="text-xl font-bold mb-4 text-white text-center">Manage ads</h1>    
-                <div class="mb-4">
-                        <label for="image" class="block text-white text-sm font-bold mb-2">Image URL:</label>
-                        <input type="text" id="image" name="image" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        <div class="flex flex-wrap -mx-2 mt-2">
+            <div class="w-full md:w-1/2 px-2 mb-4">
+                <form action="" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style="background-color: #1e1e1f  !important; color: #FFF !important;">
+                    <input type="hidden" name="action" value="add">
+                    <div class="mb-4">
+                        <label class="block text-white text-sm font-bold mb-2" for="img">
+                            Image URL
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="img" name="img" type="text" required>
                     </div>
                     <div class="mb-4">
-                        <label for="url" class="block text-white text-sm font-bold mb-2">External URL:</label>
-                        <input type="text" id="url" name="url" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <label class="block text-white text-sm font-bold mb-2" for="url">
+                            External URL
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" required>
                     </div>
                     <div class="mb-4">
-                        <label for="owner" class="block text-white text-sm font-bold mb-2">Owner:</label>
-                        <input type="text" id="owner" name="owner" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <label class="block text-white text-sm font-bold mb-2" for="owner">
+                            Owner
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="owner" name="owner" type="text" required>
                     </div>
                     <div class="mb-4">
-                        <label for="expiry_at" class="block text-white text-sm font-bold mb-2">Expiry Date:</label>
-                        <input type="datetime-local" id="expiry_at" name="expiry_at" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <label class="block text-white text-sm font-bold mb-2" for="expiry_at">
+                            Expiry Date
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="expiry_at" name="expiry_at" type="datetime-local" required>
                     </div>
-                    <div class="flex justify-center mt-6">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Create ad
+                    <div class="flex items-center justify-between">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                            Add Ad
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="mt-8">
-            <h2 class="text-lg font-bold mb-4 text-white">Ads Management</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full leading-normal">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Image</th>
-                            <th class="py-3 px-6 text-left">URL</th>
-                            <th class="py-3 px-6 text-center">Owner</th>
-                            <th class="py-3 px-6 text-center">Expiry Date</th>
-                            <th class="py-3 px-6 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        <?php foreach ($ads as $ad): ?>
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <span class="font-medium"><?php echo $ad['img']; ?></span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-left">
-                                <div class="flex items-center">
-                                    <span><?php echo $ad['url']; ?></span>
-                                </div>
-                            </td>
-                            <td class="py-3 px-6 text-center">
-                                <span><?php echo $ad['owner']; ?></span>
-                            </td>
-                            <td class="py-3 px-6 text-center">
-                                <span><?php echo $ad['expiry_at']; ?></span>
-                            </td>
-                            <td class="py-3 px-6 text-center">
-                                <div class="flex item-center justify-center">
-                                    <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
-                                        <a href="edit_ad.php?id=<?php echo $ad['id']; ?>">Edit</a>
-                                    </div>
-                                    <div class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
-                                        <a href="delete_ad.php?id=<?php echo $ad['id']; ?>" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div class="w-full md:w-1/2 px-2 mt-2">
+                <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style="background-color: #1e1e1f !important; color: #fff !important;">
+                    <h2 class="text-xl mb-4">Ads</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table-auto w-full" style="background-color: #1e1e1f !important; color: #fff !important;">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2">Image</th>
+                                    <th class="px-4 py-2">URL</th>
+                                    <th class="px-4 py-2">Owner</th>
+                                    <th class="px-4 py-2">Expiry</th>
+                                    <th class="px-4 py-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($ads as $ad): ?>
+                                    <tr>
+                                        <td class="border px-4 py-2"><?= $ad['img']; ?></td>
+                                        <td class="border px-4 py-2"><?= $ad['url']; ?></td>
+                                        <td class="border px-4 py-2"><?= $ad['owner']; ?></td>
+                                        <td class="border px-4 py-2"><?= $ad['expiry_at']; ?></td>
+                                        <td class="border px-4 py-2">
+                                            <form action="" method="post" onsubmit="return confirm('Are you sure?');">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="id" value="<?= $ad['id']; ?>">
+                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <script>
-// Function to open the modal and populate it with the ad's current data
-function openEditModal(id, img, url, owner, expiry_at) {
-  document.getElementById('editId').value = id;
-  document.getElementById('editImg').value = img;
-  document.getElementById('editUrl').value = url;
-  document.getElementById('editOwner').value = owner;
-  document.getElementById('editExpiryAt').value = expiry_at;
-  document.getElementById('editModal').classList.remove('hidden');
-}
-
-// Function to close the modal
-function closeModal() {
-  document.getElementById('editModal').classList.add('hidden');
-}
-
-// Save changes
-document.getElementById('saveEdit').addEventListener('click', function() {
-  const id = document.getElementById('editId').value;
-  const img = document.getElementById('editImg').value;
-  const url = document.getElementById('editUrl').value;
-  const owner = document.getElementById('editOwner').value;
-  const expiry_at = document.getElementById('editExpiryAt').value;
-
-  const formData = new FormData();
-  formData.append('action', 'updateAd');
-  formData.append('id', id);
-  formData.append('image', img);
-  formData.append('url', url);
-  formData.append('owner', owner);
-  formData.append('expiry_at', expiry_at);
-
-  fetch('path_to_your_php_file_handling_the_post_request', { // Adjust the fetch path as needed
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.text())
-  .then(data => {
-    alert(data); // Alert the response from the server
-    closeModal(); // Close the modal
-    // Optionally, refresh the page or part of it to show the updated data
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
-});
-
-document.querySelector('.closeModal').addEventListener('click', closeModal);
-</script>
 </body>
 </html>

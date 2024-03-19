@@ -155,7 +155,7 @@
 
 <?php
 
-require_once __DIR__ . "/../server/connect.php";
+require('../server/connect.php'); 
 
 
 $sql = "SELECT * FROM site_settings WHERE id = 1";

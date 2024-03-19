@@ -3,7 +3,6 @@ session_start();
 require 'server/connect.php';
 require 'includes/functions.php';
 
-// Redirect user to login page if not logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: login.php");
     exit;
@@ -25,14 +24,13 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 
-// Function to delete paste
 if (isset($_POST['delete']) && isset($_POST['unique_id'])) {
     $uniqueId = $_POST['unique_id'];
     $stmt = $conn->prepare("DELETE FROM paste WHERE unique_id = ? AND user_id = ?");
     $stmt->bind_param("si", $uniqueId, $userId);
     $stmt->execute();
     $stmt->close();
-    header("Location: mypastes.php"); // Refresh the page to reflect the deletion
+    header("Location: mypastes.php");
     exit;
 }
 ?>
