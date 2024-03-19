@@ -3,7 +3,6 @@ require 'server/connect.php';
 require 'includes/functions.php';
 
 $pastes = [];
-// The SQL query now orders the pastes by views in descending order
 $stmt = $conn->prepare("
     SELECT p.unique_id, p.paste_title, p.created_at, p.likes, p.dislikes, p.views, 
            CASE WHEN p.paste_by = 0 THEN 'Anonymous' ELSE u.username END AS username

@@ -59,21 +59,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['message'])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .dark-bg {
-            background-color: #121212; /* Dark background */
+            background-color: #121212; 
         }
 
         .text-area-bg {
-            background-color: #333333; /* Darker textarea background */
-            color: #ffffff; /* White text for better contrast */
+            background-color: #333333;
+            color: #ffffff; 
         }
 
         .full-width {
-            width: 100%; /* Ensure button is full-width */
+            width: 100%;
         }
 
         @media (max-width: 768px) {
             .responsive-grid {
-                grid-template-columns: repeat(1, minmax(0, 1fr)); /* Stack elements in a single column on smaller screens */
+                grid-template-columns: repeat(1, minmax(0, 1fr)); 
             }
         }
     </style>
